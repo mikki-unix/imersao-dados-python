@@ -1,8 +1,6 @@
-# importando a biblioteca pandas, para mexer com tabelas
 import pandas as pd
 
 # df = dataframe (tabela)
-# lendo um csv com o pandas (pd)
 df = pd.read_csv('https://raw.githubusercontent.com/guilhermeonrails/data-jobs/refs/heads/main/salaries.csv')
 
 # head(X) -> mostrar as X primeiras linhas da tabela
@@ -11,8 +9,7 @@ print(
   df.head(10)
 )
 
-# info() -> faz descrições sobre as colunas da tabela
-# muito parecido com o DESC do sql
+# info() -> parecido com o DESC do sql
 print('\n===Informações===')
 df.info()
 
@@ -23,46 +20,97 @@ print(
 )
 
 # shape -> tamanho da base. usa uma vetor/tupla: (linhas, colunas)
-# print(df.shape)
 
-print('\n===Tamanho da tabela===')
-print('* Quantidade de linhas:', df.shape[0])
-print('* Quantidade de colunas:', df.shape[1])
+print('''
+===Tamanho da tabela===
+* Quantidade de linhas: {}
+* Quantidade de colunas: {}
+'''
+.format(df.shape[0], df.shape[1])
+)
 
-# renomeando o nome das colunas da tabela
+# rename() -> aplicar renomeação das colunas 
 
-# foi criado um "dicionário" que referencia as colunas antigas 
-# e diz qual deve ser o novo nome para cada uma delas
-colunas_traduzidas = {
+# inplace -> define se deve criar uma cópia (inplace=False) 
+# ou se deve modificar a tabela original (inplace=True)
+# por padrão é igual à False
+
+df.rename(columns={
   'work_year': 'ano',
-  'experience_level': 'experiencia',
-  'employment_type': 'tipo_emprego',
+  'experience_level': 'senioridade',
+  'employment_type': 'contrato',
   'job_title': 'cargo',
   'salary': 'salario',
   'salary_currency': 'moeda',
   'salary_in_usd': 'salario_usd',
   'employee_residence': 'residencia',
-  'remote_ratio': 'taxa_remoto',
+  'remote_ratio': 'remoto',
   'company_location': 'local_empresa',
   'company_size': 'tamanho_empresa'
-}
-
-# rename() -> aplicar a renomeação. 
-
-# inplace -> define se deve criar uma cópia (inplace=False) 
-# ou se deve modificar a tabela original (inplace=True)
-# por padrão: se não definir nada, o inplace é igual à False
-
-df.rename(columns=colunas_traduzidas, inplace=True)
+}, inplace=True)
 
 print(
-  '\n===Nome das colunas traduzidas===\n', 
-  df. columns
+  '===Nome das colunas traduzidas===\n', 
+  df.columns
 )
 
+# replace() -> alterar os valores de uma coluna específica. tbm possui implace
+df['senioridade'] = df['senioridade'].replace({
+  'SE': 'Senior',
+  'MI': 'Pleno',
+  'EN': 'Junior',
+  'EX': 'Executivo'
+})
+
+df['contrato'] = df['contrato'].replace({
+  'FT': 'Integral',
+  'PT': 'Meio periodo',
+  'FL': 'Freelancer',
+  'CT': 'Temporario'
+})
+
+df['tamanho_empresa'] = df['tamanho_empresa'].replace({
+  'L': 'Grande',
+  'M': 'Media',
+  'S': 'Pequena',
+})
+
+# aq usei map só pq n tava aparecendo nas estatística finais
+df['remoto'] = df['remoto'].map({
+  100: 'Remoto',
+  50: 'Hibrido',
+  0: 'Presencial'
+})
+
 # value_counts() -> contar quantas vezes determinado(s) valor(es) aparece(m) na tabela
-# nesse caso foi filtrado para contar somente os valores da coluna 'experiencia'
+# nesse caso foi filtrado para contar somente os valores da coluna 'senioridade'
 print(
   '\n===Contagem de experiência===\n',
-  df['experiencia'].value_counts()
+  df['senioridade'].value_counts()
+)
+
+print(
+  '\n===Contagem dos contratos===\n',
+  df['contrato'].value_counts()
+)
+
+print(
+  '\n===Contagem de experiência===\n',
+  df['tamanho_empresa'].value_counts()
+)
+print(
+  '\n===Contagem da taxa de remoto===\n',
+  df['remoto'].value_counts()
+)
+
+print(
+  '\n===Primeira 5 linhas pós-alterações===\n',
+  df.head()
+)
+
+# include='object' -> vai trazer tbm valores de string (considerados "objects" para o Pandas)
+# na vdd agr é considerado obsoleto... blz ne?
+print(
+  '\n===Estatísicas das colunas dtype=\'str\'===\n',
+  df.describe(include='str')
 )
