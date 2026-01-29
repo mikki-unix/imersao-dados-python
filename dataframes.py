@@ -51,5 +51,15 @@ def traduzir_df():
   return df_traduzido
 
 def limpar_df():
-  return traduzir_df().dropna()
-
+  df_limpo = ( 
+    traduzir_df()
+    .dropna()
+    .assign(
+      ano = ( 
+        df_limpo['ano']
+        .astype('int64')
+      )
+    )
+  )
+  
+  return df_limpo
