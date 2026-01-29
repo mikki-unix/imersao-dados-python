@@ -1,9 +1,8 @@
 import pandas as pd
 from numpy import nan
-from df_traduzido import importar_traduzir_df
+from dataframes import traduzir_df
 
-df = importar_traduzir_df()
-
+df = traduzir_df()
 
 # isnull() -> traz uma tabela de booleano
 # especificando se os valores são nulos ou não
