@@ -1,5 +1,6 @@
 pandas
-PyQt5 # para visualizar os gráficos que serão criados pelo matplotlib
+PyQt5
 matplotlib
 seaborn
 plotly
+streamlit
